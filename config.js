@@ -9,5 +9,7 @@ module.exports = {
   social: {
     website: 'https://jamarredwards.com',
     github: 'https://github.com/jamarr'
-  }
+  },
+  pathPrefix: '/devblog',
+  siteURL: 'https://jamarredwards.com'
 };
