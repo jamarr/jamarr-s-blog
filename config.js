@@ -10,7 +10,7 @@ module.exports = {
     website: 'https://jamarredwards.com',
     github: 'https://github.com/jamarr'
   },
-  pathPrefix: '/devblog',
-  siteUrl: 'https://ryanfitzgerald.github.io/devblog/',
-  siteUrl: 'https://ryanfitzgerald.github.io/devblog/'
+  pathPrefix: '/jamarr-s-blog',
+  siteUrl: 'https://jamarredwards.com/',
+  siteUrl: 'https://jamarredwards.com/'
 };
