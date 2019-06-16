@@ -1,4 +1,4 @@
-import {graphql} from 'gatsby';
+import { graphql } from 'gatsby';
 import Helmet from 'react-helmet';
 import get from 'lodash/get';
 import React from 'react';
@@ -32,8 +32,7 @@ class BlogPostTemplate extends React.Component {
         <Container>
           <Helmet
             title={`${post.frontmatter.title} | ${author}`}
-            htmlAttributes={{ lang: 'en' }}
-          >
+            htmlAttributes={{ lang: 'en' }}>
             <meta
               name="description"
               content={`${userConfig.title} | ${userConfig.description}`}
@@ -84,7 +83,6 @@ export const pageQuery = graphql`
     site {
       siteMetadata {
         title
-        author
       }
     }
     markdownRemark(fields: { slug: { eq: $slug } }) {

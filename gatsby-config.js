@@ -1,68 +1,91 @@
-const userConfig = require('./config');
+var proxy = require('http-proxy-middleware');
 
 module.exports = {
   siteMetadata: {
-    title: userConfig.title,
-    author: userConfig.author,
-    description: userConfig.description,
-    siteUrl: userConfig.siteUrl,
+    title: 'Jamarr dev blog',
+    description: 'android dev blog'
   },
-  pathPrefix: userConfig.pathPrefix,
   plugins: [
+    'gatsby-plugin-react-helmet',
+    'gatsby-plugin-sass',
     {
-      resolve: `gatsby-source-filesystem`,
+      // keep as first gatsby-source-filesystem plugin for gatsby image support
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        path: `${__dirname}/static/img`,
+        name: 'uploads'
+      }
+    },
+    {
+      resolve: 'gatsby-source-filesystem',
       options: {
         path: `${__dirname}/src/pages`,
-        name: 'pages',
-      },
+        name: 'pages'
+      }
     },
     {
-      resolve: `gatsby-transformer-remark`,
+      resolve: 'gatsby-source-filesystem',
       options: {
-        excerpt_separator: `<!-- end -->`,
+        path: `${__dirname}/src/img`,
+        name: 'images'
+      }
+    },
+    'gatsby-plugin-sharp',
+    'gatsby-transformer-sharp',
+    {
+      resolve: 'gatsby-transformer-remark',
+      options: {
         plugins: [
           {
-            resolve: `gatsby-remark-images`,
+            resolve: 'gatsby-remark-relative-images',
             options: {
-              maxWidth: 700,
-              linkImagesToOriginal: false,
-              wrapperStyle: 'margin: 15px -30px !important',
-            },
+              name: 'uploads'
+            }
           },
           {
-            resolve: `gatsby-remark-responsive-iframe`,
+            resolve: 'gatsby-remark-images',
             options: {
-              wrapperStyle: `margin-bottom: 1.0725rem`,
-            },
+              // It's important to specify the maxWidth (in pixels) of
+              // the content container as this plugin uses this as the
+              // base for generating different widths of each image.
+              maxWidth: 2048
+            }
           },
-          'gatsby-remark-prismjs',
-          'gatsby-remark-copy-linked-files',
-          'gatsby-remark-smartypants',
-        ],
-      },
+          {
+            resolve: 'gatsby-remark-copy-linked-files',
+            options: {
+              destinationDir: 'static'
+            }
+          }
+        ]
+      }
     },
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
     {
-      resolve: `gatsby-plugin-google-analytics`,
+      resolve: 'gatsby-plugin-netlify-cms',
       options: {
-        //trackingId: `ADD YOUR TRACKING ID HERE`,
-      },
+        modulePath: `${__dirname}/src/cms/cms.js`
+      }
     },
-    `gatsby-plugin-feed`,
     {
-      resolve: `gatsby-plugin-manifest`,
+      resolve: 'gatsby-plugin-purgecss', // purges all unused/unreferenced css rules
       options: {
-        name: userConfig.title,
-        short_name: userConfig.title,
-        start_url: userConfig.siteUrl,
-        background_color: '#fff',
-        theme_color: userConfig.primaryColor,
-        display: 'minimal-ui',
-        icon: 'src/main.jpg',
-      },
-    },
-    `gatsby-plugin-offline`,
-    `gatsby-plugin-react-helmet`,
+        develop: true, // Activates purging in npm run develop
+        purgeOnly: ['/all.sass'] // applies purging only on the bulma css file
+      }
+    }, // must be after other CSS plugins
+    'gatsby-plugin-netlify' // make sure to keep it last in the array
   ],
+  // for avoiding CORS while developing Netlify Functions locally
+  // read more: https://www.gatsbyjs.org/docs/api-proxy/#advanced-proxying
+  developMiddleware: app => {
+    app.use(
+      '/.netlify/functions/',
+      proxy({
+        target: 'http://localhost:9000',
+        pathRewrite: {
+          '/.netlify/functions/': ''
+        }
+      })
+    );
+  }
 };
