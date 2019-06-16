@@ -43,7 +43,7 @@ exports.createPages = ({ graphql, actions }) => {
               }
             }
           }
-        `,
+        `
       ).then(result => {
         if (result.errors) {
           console.log(result.errors);
@@ -54,15 +54,14 @@ exports.createPages = ({ graphql, actions }) => {
         const posts = result.data.allMarkdownRemark.edges;
 
         _.each(posts, (post, index) => {
-          const previous =
-            index === posts.length - 1 ? null : posts[index + 1].node;
+          const previous = index === posts.length - 1 ? null : posts[index + 1].node;
           const next = index === 0 ? null : posts[index - 1].node;
 
           createPaginatedPages({
             edges: result.data.allMarkdownRemark.edges,
             createPage: createPage,
             pageTemplate: 'src/templates/index.js',
-            pageLength: userConfig.postsPerPage,
+            pageLength: userConfig.postsPerPage
           });
 
           createPage({
@@ -71,11 +70,11 @@ exports.createPages = ({ graphql, actions }) => {
             context: {
               slug: post.node.fields.slug,
               previous,
-              next,
-            },
+              next
+            }
           });
         });
-      }),
+      })
     );
   });
 };
@@ -88,7 +87,7 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     createNodeField({
       name: `slug`,
       node,
-      value,
+      value
     });
   }
 };
